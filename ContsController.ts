@@ -1,5 +1,6 @@
-// import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+// import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext
 
+import { timeStamp } from "console"
 import RangesController from "./RangesController"
 
 export default class ContsController { 
@@ -112,13 +113,13 @@ export default class ContsController {
         insd = 'submit' // button create
         if(bxtxt.match(insd) || bxtxt.match('save') || bxtxt.match('create') || bxtxt.match('login') || bxtxt.match('reset password')|| bxtxt.match('search'))
         {
-            var attribut = {'type':'submit','value':bxtxt,'class':'btn btn-success', 'title': bxtxt}
+            var attribut = {'type':'submit','value':bxtxt,'class':'btn btn-success mt-2', 'title': bxtxt}
             var btn = this.emptag('input',attribut)
             return(btn)
         }
         insd = "reset"
         if(bxtxt.match(insd) || bxtxt.match("Reset") || bxtxt.match("rst")){
-            var attribut = {'type':'reset','value':bxtxt,'class':'btn btn-success', 'title': bxtxt} 
+            var attribut = {'type':'reset','value':bxtxt,'class':'btn btn-success mt-2', 'title': bxtxt} 
             var rbtn = this.emptag('input',attribut)  
             return(rbtn)       
         }
@@ -146,8 +147,8 @@ export default class ContsController {
         return form
     } 
     static div(clas,id,inptflds){
-        var att = {'Class':clas,'id':id}
-        var form = this.clsngtg('div',att,inptflds)
+        var att = {'class':clas,'id':id}
+        var form = this.clsngtg('div',att,`\t ${inptflds}`)
         return form
     } 
 
@@ -160,6 +161,123 @@ export default class ContsController {
               var row = this.div('row','row',`${col1} ${col2}`)
               return(this.crtform('POST','award',row))
         }
+
+    }
+    // i accept list in image in this is function 
+    static slideimg(lst){
+        // create button list
+            var crtobj = ''
+            var btns = ''
+            var btnattribut = {type:"button" ,"data-bs-target":"#carouselExampleIndicators", "data-bs-slide-to":"0",'aria-label':'Slide 1'}
+            for(let i in lst){
+                if( i == "0"){
+                    btnattribut['class'] = 'active'
+                    btnattribut['aria-current'] = 'true'
+                    btns = this.clsngtg('button',btnattribut,'')
+                    crtobj = `\n ${btns}`
+                }
+                else{
+                    delete btnattribut['aria-current']
+                    delete btnattribut['class']
+                    btnattribut['data-bs-slide-to'] = i
+                    var num = Number(i)+1
+                    btnattribut['aria-label'] = `Slide ${num}`
+                    btns = this.clsngtg("button",btnattribut,'')                   
+                    crtobj = `${crtobj}\n ${btns}`
+                }
+            }
+        // create image list
+        var allimgobj  = ''
+        for(let i in lst){
+            var img = this.emptag('img',{src:lst[i],class:'d-block w-100',alt:i})
+            if (i =='0'){
+                allimgobj = this.div('carousel-item-active',"",`\n \t ${img}`)
+            }
+            else{
+                var new_div = this.div('carousel-item',"",`\n \t${img}`)
+                allimgobj =  `${allimgobj} ${new_div}`
+            }
+        }
+        var tag  = '<button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">\n \t <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="visually-hidden">Previous</span> \n </button> \n \t<button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next"> \n<span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span> </button>'
+
+
+        var innerdiv = this.div("carousel-inner","",allimgobj)
+        var btndiv = this.div("carousel-indicators","",crtobj)
+        var twodiv = ` ${innerdiv} ${btndiv}`
+        var div = this.div("carousel slide","carouselExampleIndicators",twodiv)
+        return div
+    }
+
+    static newslid(lst){
+        var divcls = {"class":'carousel-item active'}
+        var div = ''
+
+        for( let i in lst ){
+            if(i == '0'){
+
+                div = this.div(divcls['class'],'',`<img src="${lst[i]}" class="d-block w-100 h-800" alt="...">`)
+            }
+            else{
+                divcls['class'] = 'carousel-item'
+                div = `${div} ${this.div(divcls['class'],'',`<img src="${lst[i]}" class="d-block w-100 h-800" alt="...">`)}`
+            }
+        }
+        // start div
+        var btns  = '<button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">\n \t <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="visually-hidden">Previous</span> \n </button> \n \t<button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next"> \n<span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span> </button>'
+        var x = `<div id="carouselExample" class="carousel slide">
+        <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="566264.jpg"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="184541.jpg"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="704151.jpg"></button>
+    </div>
+    <div class="carousel-inner">
+        ${div}
+    </div>
+    ${btns}
+</div>`
+        
+        return x
     }
     // end of class 
+    static newsld(lst){
+        // this is a part of create button and image list 
+            var divcls = {"class":'carousel-item active'}
+            var div = ''
+            var btnnew
+            var btnatt  = {type:"button", 'data-bs-target':"#carouselExampleIndicators" ,'data-bs-slide-to':"0", class:"active", 'aria-current':"true", 'aria-label':"Slide 1"}
+            for( let i in lst ){
+                if(i == '0'){
+                    btnnew = this.clsngtg('button',btnatt,'') 
+                    div = this.div(divcls['class'],'',`<img src="${lst[i]}" class="d-block w-100 h-800" alt="...">`)
+                }
+                else{
+                    btnatt['data-bs-slide-to'] = i
+                    delete btnatt['class']
+                    delete btnatt['aria-current']
+                     btnatt['aria-label'] = `Slide ${Number(i+1)}`
+                    btnnew = `${btnnew} ${this.clsngtg('button',btnatt,"")}`
+                    divcls['class'] = 'carousel-item'
+                    div = `${div} ${this.div(divcls['class'],'',`<img src="${lst[i]}" class="d-block w-100 h-800" alt="...">`)}`
+                }
+            }
+
+        var all = `<div id="carouselExampleIndicators" class="carousel slide">
+                    <div class="carousel-indicators">
+                        ${btnnew}
+                    </div>
+                    <div class="carousel-inner">
+                         ${div}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                </div>`
+        return all
+    }
+
 }
